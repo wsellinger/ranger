@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class PlayerControler : MonoBehaviour
 {
-    public float Friction = 0.6f;
+    public float Friction = 0.4f;
     public float Deceleration = 0.2f;
+
+    public float StrafeAccelerationPercent = .25f;
+    public int StrafeAngle = 22;
+    public int SkidAngle = 90;
 
     public float SneakAcceleration = 2f;
     public float WalkAcceleration = 2f;
@@ -61,24 +65,74 @@ public class PlayerControler : MonoBehaviour
         }
     }
 
-    void Move(Vector2 v2Input)
+       void Move(Vector2 v2Input)
     {
         Vector3 v3Acceleration;
 
         if (v2Input.sqrMagnitude == 0)
         {
-            Vector3 v3Friction = Vector3.ClampMagnitude(v3PlayerVelocity, Friction);
-            v3PlayerVelocity = v3PlayerVelocity - v3Friction;
+            ApplyFriction();
         }
         else
         {
             float fAcceleration = GetAcceleration();
 
             v3Acceleration = CalculateCameraRelativeAcceleration(v2Input, fAcceleration);
+            
+            if (bRun)
+            {
+                v3Acceleration = ApplyTurnDampening(v3Acceleration);
+            }
+
             v3PlayerVelocity = Vector3.ClampMagnitude(v3PlayerVelocity + v3Acceleration, fPlayerMaxVelocity);
         }
 
         transform.position = transform.position + (v3PlayerVelocity * Time.deltaTime);
+    }
+
+    private Vector3 CalculateCameraRelativeAcceleration(Vector2 v2Input, float fAcceleration)
+    {
+        Vector3 v3RelativeForward, v3RelativeRight, v3PlayerAcceleration;
+        Transform tCameraTransform = Camera.main.transform;
+
+        v3RelativeForward = CalculateXYProjectedNormal(tCameraTransform.forward) * v2Input.y;
+        v3RelativeRight = CalculateXYProjectedNormal(tCameraTransform.right) * v2Input.x;
+        v3PlayerAcceleration = v3RelativeForward + v3RelativeRight;
+
+        return v3PlayerAcceleration * fAcceleration;
+    }
+
+    private void ApplyFriction()
+    {
+        Vector3 v3Friction = Vector3.ClampMagnitude(v3PlayerVelocity, Friction);
+        v3PlayerVelocity = v3PlayerVelocity - v3Friction;
+    }
+
+    private Vector3 ApplyTurnDampening(Vector3 v3Acceleration)
+    {
+        float fAngle = Vector3.Angle(v3PlayerVelocity, v3Acceleration);
+        
+        if (fAngle < StrafeAngle)
+        {
+            return v3Acceleration;
+        }
+        else
+        {
+            v3Acceleration = v3Acceleration * StrafeAccelerationPercent;
+        }
+
+        if (fAngle > SkidAngle)
+        {
+            ApplyFriction();
+        }
+
+        return v3Acceleration;
+    }
+
+    private Vector3 CalculateXYProjectedNormal(Vector3 v3Input)
+    {
+        v3Input.y = 0;
+        return v3Input.normalized;
     }
 
     private float GetMaxVelocity()
@@ -107,23 +161,5 @@ public class PlayerControler : MonoBehaviour
         }
 
         return WalkAcceleration;
-    }
-
-    Vector3 CalculateCameraRelativeAcceleration(Vector2 v2Input, float fAcceleration)
-    {
-        Vector3 v3RelativeForward, v3RelativeRight, v3PlayerAcceleration;
-        Transform tCameraTransform = Camera.main.transform;
-
-        v3RelativeForward = CalculateXYProjectedNormal(tCameraTransform.forward) * v2Input.y;
-        v3RelativeRight = CalculateXYProjectedNormal(tCameraTransform.right) * v2Input.x;
-        v3PlayerAcceleration = v3RelativeForward + v3RelativeRight;
-
-        return v3PlayerAcceleration * fAcceleration;
-    }
-
-    Vector3 CalculateXYProjectedNormal(Vector3 v3Input)
-    {
-        v3Input.y = 0;
-        return v3Input.normalized;
     }
 }
