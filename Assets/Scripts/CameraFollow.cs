@@ -4,37 +4,68 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Transform Target;
-    public float FollowDistance;
-    public float Speed;
+	public GameObject Target;
+	public float FollowDistance = 20f;
+	public float Speed = 75f;
+	public float RunSpeed = 2f;
 
-    float fHorizontalAngle = 180;
-    float fVerticalAngle = 45;
+	private Transform m_tTargetTransform;
+	private Transform m_tTargetModelTransform;
+	private PlayerControler m_pcTargetControler;
 
-    void Start ()
-    {
-        
-    }
+	private float m_fHorizontalAngle = 180f;
+	private float m_fVerticalAngle = 45f;
 
-    void FixedUpdate()
-    {
-        float horizontalAxis = Input.GetAxisRaw("Horizontal Right");
-        float verticalAxis = -Input.GetAxisRaw("Vertical Right");
+	void Awake()
+	{
+		m_tTargetTransform = Target.transform;
+		m_tTargetModelTransform = Target.transform.Find("Model");
+		m_pcTargetControler = Target.GetComponent<PlayerControler>();
+	}
 
-        fHorizontalAngle += horizontalAxis * Speed;
-        fVerticalAngle += verticalAxis * Speed;
-        
-        Vector3 v3Horizontal, v3Vertical, v3CombinedAngle, v3CameraOffset;
-        Quaternion qHorizontal, qVertical;
+	void FixedUpdate()
+	{
+		Vector2 v2Input = GetRightStickInput();
 
-        qHorizontal = Quaternion.AngleAxis(fHorizontalAngle, Vector3.up);
-        qVertical = Quaternion.AngleAxis(fVerticalAngle, Vector3.left);
-        v3Horizontal = qHorizontal * Target.forward;
-        v3Vertical = qHorizontal * qVertical * Target.forward;
-        v3CombinedAngle = v3Horizontal + v3Vertical;
-        v3CameraOffset = v3CombinedAngle.normalized * FollowDistance;
+		UpdateCameraAngle(v2Input);
 
-        transform.position = Target.position + v3CameraOffset;
-        transform.LookAt(Target);
-    }
+		Vector3 v3CameraOffset = GetCameraOffset();
+
+		transform.position = m_tTargetTransform.position + v3CameraOffset;
+		transform.LookAt(m_tTargetTransform); //Must look after moving to prevent jitter
+	}
+
+	private Vector2 GetRightStickInput()
+	{
+		float fHorizontalAxisInput = Input.GetAxisRaw("Horizontal Right");
+		float fVerticalAxisInput = Input.GetAxisRaw("Vertical Right");
+		Vector2 v2Input = new Vector2(fHorizontalAxisInput, fVerticalAxisInput);
+
+		return Vector2.ClampMagnitude(v2Input, 1);
+	}
+
+	private void UpdateCameraAngle(Vector2 v2Input)
+	{
+		//Base angles updated by input
+		m_fHorizontalAngle += v2Input.x * (Speed * Time.deltaTime);
+		m_fVerticalAngle += -v2Input.y * (Speed * Time.deltaTime);
+
+		if (m_pcTargetControler.Run)
+		{
+			//Shunt the horizontal angle behind target while running
+			float fAngleBehindTarget = Mathf.Repeat(m_tTargetModelTransform.rotation.eulerAngles.y + 180, 360);
+			m_fHorizontalAngle = Mathf.LerpAngle(m_fHorizontalAngle, fAngleBehindTarget, RunSpeed * Time.deltaTime);
+		}
+	}
+
+	private Vector3 GetCameraOffset()
+	{
+		Quaternion qHorizontal = Quaternion.AngleAxis(m_fHorizontalAngle, Vector3.up);
+		Quaternion qVertical = Quaternion.AngleAxis(m_fVerticalAngle, Vector3.left);
+		Vector3 v3Horizontal = qHorizontal * m_tTargetTransform.forward;
+		Vector3 v3Vertical = qHorizontal * qVertical * m_tTargetTransform.forward;
+		Vector3 v3CombinedAngle = v3Horizontal + v3Vertical;
+
+		return v3CombinedAngle.normalized * FollowDistance;
+	}
 }
