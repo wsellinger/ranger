@@ -19,22 +19,31 @@ public class PlayerControler : MonoBehaviour
     public float WalkMaxVelocity = 5f;
     public float RunMaxVelocity = 10f;
 
-    private Vector3 v3PlayerVelocity;
-    private float fPlayerMaxVelocity;
-    private bool bSneak;
-    private bool bRun;
+	public float TurnSpeed = 10f;
 
-    void Start ()
+    public bool Run
     {
-		
+        get { return m_bRun; }
+    }
+
+    private Vector3 m_v3PlayerVelocity;
+    private float m_fPlayerMaxVelocity;
+    private bool m_bSneak;
+    private bool m_bRun;
+
+	private Transform m_tModelTransform;
+
+	void Awake()
+	{
+		m_tModelTransform = transform.Find("Model");
 	}
 
-    void FixedUpdate()
+	void FixedUpdate()
     {
         Vector2 v2Input = GetLeftStickInput();
         
-        bSneak = Input.GetButton("Sneak");
-        bRun = Input.GetButton("Run");
+        m_bSneak = Input.GetButton("Sneak");
+        m_bRun = Input.GetButton("Run");
 
         UpdateMaxVelocity(v2Input);
         Move(v2Input);
@@ -51,21 +60,21 @@ public class PlayerControler : MonoBehaviour
 
     private void UpdateMaxVelocity(Vector2 v2Input)
     {
-        float fMaxVelocity = GetMaxVelocity();
+		float fMaxVelocity = GetMaxVelocity();
 
         fMaxVelocity = fMaxVelocity * v2Input.magnitude;
 
-        if (fPlayerMaxVelocity > fMaxVelocity)
+        if (m_fPlayerMaxVelocity > fMaxVelocity)
         {
-            fPlayerMaxVelocity = Mathf.Max(fPlayerMaxVelocity - Deceleration, fMaxVelocity);
+            m_fPlayerMaxVelocity = Mathf.Max(m_fPlayerMaxVelocity - Deceleration, fMaxVelocity);
         }
-        else if (fPlayerMaxVelocity < fMaxVelocity)
-        {
-            fPlayerMaxVelocity = fMaxVelocity;
+        else if (m_fPlayerMaxVelocity < fMaxVelocity)
+		{
+            m_fPlayerMaxVelocity = fMaxVelocity;
         }
     }
 
-       void Move(Vector2 v2Input)
+    private void Move(Vector2 v2Input)
     {
         Vector3 v3Acceleration;
 
@@ -79,15 +88,23 @@ public class PlayerControler : MonoBehaviour
 
             v3Acceleration = CalculateCameraRelativeAcceleration(v2Input, fAcceleration);
             
-            if (bRun)
+            if (m_bRun)
             {
                 v3Acceleration = ApplyTurnDampening(v3Acceleration);
             }
 
-            v3PlayerVelocity = Vector3.ClampMagnitude(v3PlayerVelocity + v3Acceleration, fPlayerMaxVelocity);
+            m_v3PlayerVelocity = Vector3.ClampMagnitude(m_v3PlayerVelocity + v3Acceleration, m_fPlayerMaxVelocity);
         }
 
-        transform.position = transform.position + (v3PlayerVelocity * Time.deltaTime);
+        transform.position = transform.position + (m_v3PlayerVelocity * Time.deltaTime);
+		
+		//Rotation
+		Vector3 v3Zero = new Vector3(0, 0, 0);
+        if (m_v3PlayerVelocity != v3Zero)
+		{
+			Quaternion qLookTarget = Quaternion.LookRotation(m_v3PlayerVelocity);
+			m_tModelTransform.rotation = Quaternion.Lerp(m_tModelTransform.rotation, qLookTarget, TurnSpeed * Time.deltaTime);
+		}
     }
 
     private Vector3 CalculateCameraRelativeAcceleration(Vector2 v2Input, float fAcceleration)
@@ -104,13 +121,13 @@ public class PlayerControler : MonoBehaviour
 
     private void ApplyFriction()
     {
-        Vector3 v3Friction = Vector3.ClampMagnitude(v3PlayerVelocity, Friction);
-        v3PlayerVelocity = v3PlayerVelocity - v3Friction;
+        Vector3 v3Friction = Vector3.ClampMagnitude(m_v3PlayerVelocity, Friction);
+        m_v3PlayerVelocity = m_v3PlayerVelocity - v3Friction;
     }
 
     private Vector3 ApplyTurnDampening(Vector3 v3Acceleration)
     {
-        float fAngle = Vector3.Angle(v3PlayerVelocity, v3Acceleration);
+        float fAngle = Vector3.Angle(m_v3PlayerVelocity, v3Acceleration);
         
         if (fAngle < StrafeAngle)
         {
@@ -137,11 +154,11 @@ public class PlayerControler : MonoBehaviour
 
     private float GetMaxVelocity()
     {
-        if (bSneak)
+        if (m_bSneak)
         {
             return SneakMaxVelocity;
         }
-        else if (bRun)
+        else if (m_bRun)
         {
             return RunMaxVelocity;
         }
@@ -151,11 +168,11 @@ public class PlayerControler : MonoBehaviour
 
     private float GetAcceleration()
     {
-        if (bSneak)
+        if (m_bSneak)
         {
             return SneakAcceleration;
         }
-        else if (bRun)
+        else if (m_bRun)
         {
             return RunAcceleration;
         }
