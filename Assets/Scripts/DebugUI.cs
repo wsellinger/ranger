@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class DebugUI : MonoBehaviour 
 {
-    Text tDebug;
-    GameObject goPlayer;
+    private Text tDebug;
+    private GameObject goPlayer;
 
     void Awake ()
     {

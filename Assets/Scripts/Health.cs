@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,28 +7,40 @@ public class Health : MonoBehaviour
 {
     public uint MaxHealth;
 
-    private uint uiCurrentHealth;
+    public event EventHandler HealthChanged;
 
+    private uint m_uiCurrentHealth;
     public uint CurrentHealth
     {
-        get
-        {
-            return uiCurrentHealth;
+        get { return m_uiCurrentHealth; }
+		private set
+		{
+            if (value != m_uiCurrentHealth)
+            {
+                m_uiCurrentHealth = value;
+                RaiseHealthChanged();
+            }
         }
     }
 
     void Awake()
     {
-        uiCurrentHealth = MaxHealth;
+        CurrentHealth = MaxHealth;
     }
 
     public void TakeDamage(uint uiDamageAmount)
     {
-        uiCurrentHealth = (uint)Mathf.FloorToInt(Mathf.Max(CurrentHealth - uiDamageAmount, 0));
+        CurrentHealth = (uint)Mathf.FloorToInt(Mathf.Max(CurrentHealth - uiDamageAmount, 0));
     }
 
     public void Heal(uint uiHealAmount)
     {
-        uiCurrentHealth = (uint)Mathf.CeilToInt(Mathf.Min(CurrentHealth + uiHealAmount, MaxHealth));
+        CurrentHealth = (uint)Mathf.CeilToInt(Mathf.Min(CurrentHealth + uiHealAmount, MaxHealth));
+    }
+
+    protected virtual void RaiseHealthChanged()
+    {
+        EventHandler handler = HealthChanged;
+        handler?.Invoke(this, EventArgs.Empty);
     }
 }
