@@ -40,7 +40,7 @@ public class StaminaHealthRegen : MonoBehaviour
 
     void OnTimerInterval()
     {
-        uint uiHealAmount = (uint)Mathf.CeilToInt(MaxRegen * sStamina.StaminaPercent);
-        hHealth.Heal(uiHealAmount);
+        //uint uiHealAmount = (uint)Mathf.CeilToInt(MaxRegen * sStamina.StaminaPercent);
+        //hHealth.Heal(uiHealAmount);
     }
 }

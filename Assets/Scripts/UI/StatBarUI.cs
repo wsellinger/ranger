@@ -40,6 +40,8 @@ public class StatBarUI : MonoBehaviour
 				sTarget = Target.GetComponent<Stamina>();
 				break;
 			case EStatType.VITALITY:
+				sTarget = Target.GetComponent<Vitality>();
+				break;
 			default:
 				sTarget = Target.GetComponent<Stat>();
 				break;
@@ -52,9 +54,8 @@ public class StatBarUI : MonoBehaviour
 		m_rtEmptyStatBar = transform.Find(EMPTY_STAT_BAR_NAME).GetComponent<RectTransform>();
 
 		//Get Initial Values
-		float fCurrentVMaxBuffer = Mathf.Abs(m_rtMaxStatBar.rect.xMin - m_rtStatBar.rect.xMin);
-		m_fMaxStatBarMaxLength = m_rtEmptyStatBar.sizeDelta.x;
-		m_fStatBarMaxLength = m_fMaxStatBarMaxLength - fCurrentVMaxBuffer;
+		m_fMaxStatBarMaxLength = m_rtEmptyStatBar.sizeDelta.x - .5f; //TODO replace .5 with value derived from initial positions
+		m_fStatBarMaxLength = m_rtEmptyStatBar.sizeDelta.x - .5f; //TODO replace .5 with value derived from initial positions
 
 		//Set Initial Widths
 		m_rtStatBar.sizeDelta = new Vector2(m_fStatBarMaxLength, m_rtStatBar.sizeDelta.y);

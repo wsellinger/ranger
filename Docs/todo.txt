@@ -1,10 +1,7 @@
 todo
-	make ui bars work again
-		set initial lengths
-	rename stamina to vitality
-		rename stamina/health regen and readd to player (or depricate and move health regen into the health class)
-	add stamina stat
-	add stamina regen (based on vitality)
+	add stamina logic
+	add health regen logic to vitality class (remove staminaHealthRegen)
+	add stamina regen to vitality class
 	add max stat degen
 		health
 		stamina
@@ -13,3 +10,4 @@ todo
 		stamina max regen
 	add sleep
 		vitality max regen
+	change environmental damage and vitality loss to "loss/damage per second" to smooth it out
