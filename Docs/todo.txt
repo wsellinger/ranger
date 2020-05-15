@@ -1,0 +1,15 @@
+todo
+	make ui bars work again
+		set initial lengths
+	rename stamina to vitality
+		rename stamina/health regen and readd to player (or depricate and move health regen into the health class)
+	add stamina stat
+	add stamina regen (based on vitality)
+	add max stat degen
+		health
+		stamina
+	add rest
+		helth max regen
+		stamina max regen
+	add sleep
+		vitality max regen
