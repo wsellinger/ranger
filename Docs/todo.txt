@@ -10,4 +10,4 @@ todo
 		stamina max regen
 	add sleep
 		vitality max regen
-	change environmental damage and vitality loss to "loss/damage per second" to smooth it out
+	consider changing environmental damage to "loss/damage per second" to smooth it out

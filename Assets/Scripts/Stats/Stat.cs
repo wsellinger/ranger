@@ -9,15 +9,18 @@ public class Stat : MonoBehaviour
 
     public event EventHandler StatChanged;
 
-    private uint m_uiCurrentStat;
-    public uint CurrentStat
+    private float m_fCurrentStat;
+    public float CurrentStat
     {
-        get { return m_uiCurrentStat; }
+        get { return m_fCurrentStat; }
 		protected set
 		{
-            if (value != m_uiCurrentStat)
+            value = Math.Min(value, MaxStat);
+            value = Math.Max(value, 0);
+
+            if (value != m_fCurrentStat)
             {
-                m_uiCurrentStat = value;
+                m_fCurrentStat = value;
                 RaiseStatChanged();
             }
         }

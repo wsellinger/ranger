@@ -5,13 +5,30 @@ using UnityEngine;
 
 class Health : Stat
 {
-	public void TakeDamage(uint uiDamageAmount)
+	public float MaxRegenPerSec;
+
+	private Vitality m_vitality;
+
+	override public void Awake()
 	{
-		CurrentStat = (uint)Mathf.FloorToInt(Mathf.Max(CurrentStat - uiDamageAmount, 0));
+		base.Awake();
+
+		m_vitality = GetComponent<Vitality>();
 	}
 
-	public void Heal(uint uiHealAmount)
+	void Update()
 	{
-		CurrentStat = (uint)Mathf.CeilToInt(Mathf.Min(CurrentStat + uiHealAmount, MaxStat));
+		//Regen
+		CurrentStat += MaxRegenPerSec * Time.deltaTime * m_vitality.VitalityPercent;
+	}
+
+	public void TakeDamage(float uiDamageAmount)
+	{
+		CurrentStat -= uiDamageAmount;
+	}
+
+	public void Heal(float uiHealAmount)
+	{
+		CurrentStat += uiHealAmount;
 	}
 }

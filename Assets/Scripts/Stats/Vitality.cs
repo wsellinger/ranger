@@ -5,36 +5,17 @@ using UnityEngine;
 
 public class Vitality : Stat
 {
-	public uint LossPerInterval;
-	public uint Interval;
-
-	float fTimer;
-
-	public float StaminaPercent
+	public float DecayPerSec;
+	public float VitalityPercent
 	{
 		get
 		{
-			return (float)CurrentStat / (float)MaxStat;
+			return CurrentStat / (float)MaxStat;
 		}
 	}
 
-	override public void Awake()
+	private void Update()
 	{
-		base.Awake();
-		fTimer = 0;
-	}
-
-	void Update()
-	{
-		if (fTimer < Interval)
-		{
-			fTimer = Mathf.Min(fTimer + Time.deltaTime, Interval);
-		}
-
-		if (fTimer >= Interval)
-		{
-			CurrentStat = Math.Max(CurrentStat - LossPerInterval, 0);
-			fTimer = 0;
-		}
+		CurrentStat -= DecayPerSec * Time.deltaTime;
 	}
 }
