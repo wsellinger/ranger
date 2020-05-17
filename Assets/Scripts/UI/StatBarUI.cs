@@ -7,14 +7,8 @@ using UnityEngine.Events;
 public class StatBarUI : MonoBehaviour
 {
 	public GameObject Target;
-	public EStatType StatType;
 
-	public enum EStatType
-	{
-		HEALTH, STAMINA, VITALITY
-	}
-
-	private Stat m_sTarget;
+	protected Stat m_sTarget;
 
 	private RectTransform m_rtStatBar;
 	private RectTransform m_rtMaxStatBar;
@@ -27,28 +21,8 @@ public class StatBarUI : MonoBehaviour
 	private const string MAX_STAT_BAR_NAME = "Max Bar";
 	private const string EMPTY_STAT_BAR_NAME = "Empty Bar";
 
-	void Awake()
+	virtual public void Awake()
 	{
-		//Get References
-		Stat sTarget;
-		switch (StatType)
-		{
-			case EStatType.HEALTH:
-				sTarget = Target.GetComponent<Health>();
-				break;
-			case EStatType.STAMINA:
-				sTarget = Target.GetComponent<Stamina>();
-				break;
-			case EStatType.VITALITY:
-				sTarget = Target.GetComponent<Vitality>();
-				break;
-			default:
-				sTarget = Target.GetComponent<Stat>();
-				break;
-		}
-
-		m_sTarget = sTarget;
-
 		m_rtStatBar = transform.Find(STAT_BAR_NAME).GetComponent<RectTransform>();
 		m_rtMaxStatBar = transform.Find(MAX_STAT_BAR_NAME).GetComponent<RectTransform>();
 		m_rtEmptyStatBar = transform.Find(EMPTY_STAT_BAR_NAME).GetComponent<RectTransform>();
