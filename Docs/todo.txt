@@ -1,13 +1,15 @@
 todo
-	add stamina logic
-	add health regen logic to vitality class (remove staminaHealthRegen)
-	add stamina regen to vitality class
+	create custom classes for each ui bar
+		grey out stamina bar when depleted == true
 	add max stat degen
-		health
 		stamina
+		health
 	add rest
 		helth max regen
 		stamina max regen
 	add sleep
 		vitality max regen
 	consider changing environmental damage to "loss/damage per second" to smooth it out
+	run
+		ignore input magnitude on run
+	

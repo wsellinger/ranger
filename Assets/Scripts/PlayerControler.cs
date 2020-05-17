@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class PlayerControler : MonoBehaviour
 {
@@ -21,33 +22,53 @@ public class PlayerControler : MonoBehaviour
 
 	public float TurnSpeed = 10f;
 
+    public float RunDrainPerSec;
+
     public bool Run
     {
-        get { return m_bRun; }
+        get 
+        {
+            return Input.GetButton("Run") && !m_Stamina.Depleted;
+        }
     }
+    private bool Running
+    {
+        get
+        {
+            //If player can run and there is directional input
+            return Run && GetLeftStickInput().sqrMagnitude != 0;
+        }
+	}
+	private bool Sneak
+	{
+		get { return Input.GetButton("Sneak"); }
+	}
 
-    private Vector3 m_v3PlayerVelocity;
+	private Vector3 m_v3PlayerVelocity;
     private float m_fPlayerMaxVelocity;
-    private bool m_bSneak;
-    private bool m_bRun;
 
 	private Transform m_tModelTransform;
+
+    private Stamina m_Stamina;
 
 	void Awake()
 	{
 		m_tModelTransform = transform.Find("Model");
+        m_Stamina = GetComponent<Stamina>();
 	}
 
-	void FixedUpdate()
+    void FixedUpdate()
     {
         Vector2 v2Input = GetLeftStickInput();
-        
-        m_bSneak = Input.GetButton("Sneak");
-        m_bRun = Input.GetButton("Run");
 
         UpdateMaxVelocity(v2Input);
         Move(v2Input);
-    }
+
+		if (Running)
+		{
+			m_Stamina.Drain(RunDrainPerSec * Time.deltaTime);
+		}
+	}
 
     private Vector2 GetLeftStickInput()
     {
@@ -88,7 +109,7 @@ public class PlayerControler : MonoBehaviour
 
             v3Acceleration = CalculateCameraRelativeAcceleration(v2Input, fAcceleration);
             
-            if (m_bRun)
+            if (Run)
             {
                 v3Acceleration = ApplyTurnDampening(v3Acceleration);
             }
@@ -154,11 +175,11 @@ public class PlayerControler : MonoBehaviour
 
     private float GetMaxVelocity()
     {
-        if (m_bSneak)
+        if (Sneak)
         {
             return SneakMaxVelocity;
         }
-        else if (m_bRun)
+        else if (Run)
         {
             return RunMaxVelocity;
         }
@@ -168,11 +189,11 @@ public class PlayerControler : MonoBehaviour
 
     private float GetAcceleration()
     {
-        if (m_bSneak)
+        if (Sneak)
         {
             return SneakAcceleration;
         }
-        else if (m_bRun)
+        else if (Run)
         {
             return RunAcceleration;
         }

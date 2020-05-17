@@ -5,7 +5,7 @@ using UnityEngine;
 
 class Health : Stat
 {
-	public float MaxRegenPerSec;
+	public float MaxRegenPerSec = 2;
 
 	private Vitality m_vitality;
 

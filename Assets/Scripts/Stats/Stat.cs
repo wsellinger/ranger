@@ -26,6 +26,11 @@ public class Stat : MonoBehaviour
         }
     }
 
+    public bool Full
+    {
+        get { return CurrentStat == MaxStat; }
+    }
+
     public virtual void Awake()
     {
         CurrentStat = MaxStat;
