@@ -21,7 +21,7 @@ public class Stat : MonoBehaviour
             if (value != m_fCurrentStat)
             {
                 m_fCurrentStat = value;
-                RaiseStatChanged();
+                StatChanged.Raise(this);
             }
         }
 	}
@@ -35,10 +35,4 @@ public class Stat : MonoBehaviour
     {
         CurrentStat = MaxStat;
     }
-
-    protected virtual void RaiseStatChanged()
-    {
-        EventHandler handler = StatChanged;
-        handler?.Invoke(this, EventArgs.Empty);
-	}
 }

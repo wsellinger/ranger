@@ -18,8 +18,8 @@ public class Stamina : Stat
 			{
 				m_bDepleted = value;
 
-				if (value) RaiseStaminaDepleted();
-				else RaiseStaminaRestored();
+				if (value) StaminaDepleted.Raise(this);
+				else StaminaRestored.Raise(this);
 			}
 		}
 	}
@@ -75,17 +75,5 @@ public class Stamina : Stat
 		{
 			Depleted = false;
 		}
-	}
-
-	protected virtual void RaiseStaminaDepleted()
-	{
-		EventHandler handler = StaminaDepleted;
-		handler?.Invoke(this, EventArgs.Empty);
-	}
-	protected virtual void RaiseStaminaRestored()
-	{
-		StaminaRestored.Invoke(this, EventArgs.Empty);
-		EventHandler handler = StaminaRestored;
-		handler?.Invoke(this, EventArgs.Empty);
 	}
 }
