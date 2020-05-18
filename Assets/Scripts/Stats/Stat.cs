@@ -9,7 +9,7 @@ public class Stat : MonoBehaviour
 
     public event EventHandler StatChanged;
 
-    private float m_fCurrentStat;
+	private float m_fCurrentStat;
     public float CurrentStat
     {
         get { return m_fCurrentStat; }
@@ -24,9 +24,9 @@ public class Stat : MonoBehaviour
                 RaiseStatChanged();
             }
         }
-    }
+	}
 
-    public bool Full
+	public bool Full
     {
         get { return CurrentStat == MaxStat; }
     }
@@ -40,5 +40,5 @@ public class Stat : MonoBehaviour
     {
         EventHandler handler = StatChanged;
         handler?.Invoke(this, EventArgs.Empty);
-    }
+	}
 }

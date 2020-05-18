@@ -5,62 +5,87 @@ using UnityEngine;
 
 public class Stamina : Stat
 {
-    public float MaxRegenPerSec;
-    public float RegenDelay;
+	public float MaxRegenPerSec;
+	public float RegenDelay;
 
-    public bool Depleted
-    {
-        get;
-        private set;
-    }
+	private bool m_bDepleted;
+	virtual public bool Depleted
+	{
+		get { return m_bDepleted; }
+		protected set
+		{
+			if (m_bDepleted != value)
+			{
+				m_bDepleted = value;
 
-    private Vitality m_vitality;
-    private float m_fRegenDelay;
-
-    override public void Awake()
-    {
-        base.Awake();
-
-        m_vitality = GetComponent<Vitality>();
+				if (value) RaiseStaminaDepleted();
+				else RaiseStaminaRestored();
+			}
+		}
 	}
 
-    void Update()
+	public event EventHandler StaminaDepleted;
+	public event EventHandler StaminaRestored;
+
+	private Vitality m_vitality;
+	private float m_fRegenDelay;
+
+	override public void Awake()
 	{
-        if (m_fRegenDelay == 0)
-        {
-            Regen();
-        }
-        else
-        {
-            m_fRegenDelay = Mathf.Max(m_fRegenDelay - Time.deltaTime, 0);
-        }
-    }
+		base.Awake();
 
-    public void Drain(float fValue)
-    {
-        CurrentStat -= Mathf.Abs(fValue);
+		m_vitality = GetComponent<Vitality>();
+	}
 
-        if (CurrentStat == 0)
-        {
-            Depleted = true;
+	void Update()
+	{
+		if (m_fRegenDelay == 0)
+		{
+			Regen();
 		}
 		else
 		{
-            m_fRegenDelay = RegenDelay;
+			m_fRegenDelay = Mathf.Max(m_fRegenDelay - Time.deltaTime, 0);
+		}
+	}
+
+	public void Drain(float fValue)
+	{
+		CurrentStat -= Mathf.Abs(fValue);
+
+		if (CurrentStat == 0)
+		{
+			Depleted = true;
+		}
+		else
+		{
+			m_fRegenDelay = RegenDelay;
 		}
 	}    
 
-    private void Regen()
-    {
-        if (!Full)
-        {
-		    CurrentStat += MaxRegenPerSec * Time.deltaTime * m_vitality.VitalityPercent;
-        }
+	private void Regen()
+	{
+		if (!Full)
+		{
+			CurrentStat += MaxRegenPerSec * Time.deltaTime * m_vitality.VitalityPercent;
+		}
 
-        //Stay depleted until fully restored
-        if (Depleted && CurrentStat == MaxStat)
-        {
-            Depleted = false;
-        }
+		//Stay depleted until fully restored
+		if (Depleted && Full)
+		{
+			Depleted = false;
+		}
+	}
+
+	protected virtual void RaiseStaminaDepleted()
+	{
+		EventHandler handler = StaminaDepleted;
+		handler?.Invoke(this, EventArgs.Empty);
+	}
+	protected virtual void RaiseStaminaRestored()
+	{
+		StaminaRestored.Invoke(this, EventArgs.Empty);
+		EventHandler handler = StaminaRestored;
+		handler?.Invoke(this, EventArgs.Empty);
 	}
 }

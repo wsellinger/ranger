@@ -10,9 +10,9 @@ public class StatBarUI : MonoBehaviour
 
 	protected Stat m_sTarget;
 
-	private RectTransform m_rtStatBar;
-	private RectTransform m_rtMaxStatBar;
-	private RectTransform m_rtEmptyStatBar;
+	protected RectTransform m_rtStatBar;
+	protected RectTransform m_rtMaxStatBar;
+	protected RectTransform m_rtEmptyStatBar;
 
 	private float m_fMaxStatBarMaxLength;
 	private float m_fStatBarMaxLength;
@@ -36,12 +36,12 @@ public class StatBarUI : MonoBehaviour
 		m_rtMaxStatBar.sizeDelta = new Vector2(m_fMaxStatBarMaxLength, m_rtStatBar.sizeDelta.y);
 	}
 
-	void OnEnable()
+	virtual public void OnEnable()
 	{
 		m_sTarget.StatChanged += ConsumeStatChanged;
 	}
 
-	void OnDisable()
+	virtual public void OnDisable()
 	{
 		m_sTarget.StatChanged -= ConsumeStatChanged;
 	}
