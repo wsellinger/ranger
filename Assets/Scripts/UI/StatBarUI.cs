@@ -38,18 +38,29 @@ public class StatBarUI : MonoBehaviour
 
 	virtual public void OnEnable()
 	{
-		m_sTarget.StatChanged += ConsumeStatChanged;
+		m_sTarget.CurrentStatChanged += ConsumeCurrentStatChanged;
+		m_sTarget.CurrentMaxStatChanged += ConsumeCurrentMaxStatChanged;
 	}
 
 	virtual public void OnDisable()
 	{
-		m_sTarget.StatChanged -= ConsumeStatChanged;
+		m_sTarget.CurrentStatChanged -= ConsumeCurrentStatChanged;
+		m_sTarget.CurrentMaxStatChanged -= ConsumeCurrentMaxStatChanged;
 	}
 
-	private void ConsumeStatChanged(object sender, EventArgs e)
+	private void ConsumeCurrentStatChanged(object sender, EventArgs e)
 	{
-		float fPercentage = (float)m_sTarget.CurrentStat / (float)m_sTarget.MaxStat;
-		float fBarWidth = m_fStatBarMaxLength * fPercentage;
-		m_rtStatBar.sizeDelta = new Vector2(fBarWidth, m_rtStatBar.sizeDelta.y);
+		SetStatBarWidth(m_sTarget.CurrentStat, m_sTarget.MaxStat, m_fStatBarMaxLength, m_rtStatBar);
+	}
+	private void ConsumeCurrentMaxStatChanged(object sender, EventArgs e)
+	{
+		SetStatBarWidth(m_sTarget.CurrentMaxStat, m_sTarget.MaxStat, m_fMaxStatBarMaxLength, m_rtMaxStatBar);
+	}
+
+	private void SetStatBarWidth(float fCurrent, float fMaxStat, float fMaxBar, RectTransform rtBar)
+	{
+		float fPercentage = fCurrent / fMaxStat;
+		float fBarWidth = fMaxBar * fPercentage;
+		rtBar.sizeDelta = new Vector2(fBarWidth, rtBar.sizeDelta.y);
 	}
 }

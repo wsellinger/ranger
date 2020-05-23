@@ -5,7 +5,10 @@ using UnityEngine;
 
 class Health : Stat
 {
+	[Tooltip("This is the fastest health can regen. Actual regen is a factor of remaining vitality.")]
 	public float MaxRegenPerSec = 2;
+	[Tooltip("This is the percent of leftover damage that impacts max health when taking damage with no life.")]
+	public float DamageOverflowModifier = 0.5f;
 
 	private Vitality m_vitality;
 
@@ -19,16 +22,27 @@ class Health : Stat
 	void Update()
 	{
 		//Regen
-		CurrentStat += MaxRegenPerSec * Time.deltaTime * m_vitality.VitalityPercent;
+		if (!Full)
+		{
+			CurrentStat += MaxRegenPerSec * Time.deltaTime * m_vitality.VitalityPercent;
+		}
 	}
 
-	public void TakeDamage(float uiDamageAmount)
+	public void TakeDamage(float fDamage)
 	{
-		CurrentStat -= uiDamageAmount;
+		float fOverflowDamage = GetOverflowDamage(fDamage);
+		CurrentStat -= fDamage;
+		CurrentMaxStat -= fOverflowDamage;
 	}
 
-	public void Heal(float uiHealAmount)
+	public void Heal(float fHeal)
 	{
-		CurrentStat += uiHealAmount;
+		CurrentStat += fHeal;
+	}
+
+	private float GetOverflowDamage(float fDamage)
+	{
+		fDamage -= CurrentStat;
+		return fDamage > 0 ? fDamage * DamageOverflowModifier : 0;
 	}
 }

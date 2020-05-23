@@ -7,7 +7,8 @@ public class Stat : MonoBehaviour
 {
     public uint MaxStat;
 
-    public event EventHandler StatChanged;
+    public event EventHandler CurrentStatChanged;
+	public event EventHandler CurrentMaxStatChanged;
 
 	private float m_fCurrentStat;
     public float CurrentStat
@@ -15,24 +16,41 @@ public class Stat : MonoBehaviour
         get { return m_fCurrentStat; }
 		protected set
 		{
-            value = Math.Min(value, MaxStat);
+            value = Math.Min(value, m_fCurrentMaxStat);
             value = Math.Max(value, 0);
 
             if (value != m_fCurrentStat)
             {
                 m_fCurrentStat = value;
-                StatChanged.Raise(this);
+                CurrentStatChanged.Raise(this);
             }
         }
 	}
 
+	private float m_fCurrentMaxStat;
+	public float CurrentMaxStat
+	{
+		get { return m_fCurrentMaxStat; }
+		protected set
+		{
+			value = Math.Min(value, MaxStat);
+			value = Math.Max(value, 0);
+
+			if (value != m_fCurrentMaxStat)
+			{
+				m_fCurrentMaxStat = value;
+				CurrentMaxStatChanged.Raise(this);
+			}
+		}
+	}
+
 	public bool Full
     {
-        get { return CurrentStat == MaxStat; }
+        get { return CurrentStat == CurrentMaxStat; }
     }
 
     public virtual void Awake()
     {
-        CurrentStat = MaxStat;
+		m_fCurrentStat = m_fCurrentMaxStat = MaxStat;		
     }
 }
