@@ -26,7 +26,7 @@ public class EnvironmentalDamage : MonoBehaviour
     {
         if (other.gameObject.tag == Tags.PLAYER && fTimer == (Interval))
         {
-            other.gameObject.GetComponent<Health>().TakeDamage(DamagePerInteval);
+            other.gameObject.GetComponent<Health>().DamageStat(DamagePerInteval);
             fTimer = 0;
         }
     }

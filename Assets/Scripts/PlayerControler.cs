@@ -66,7 +66,7 @@ public class PlayerControler : MonoBehaviour
 
 		if (Running)
 		{
-			m_Stamina.Drain(RunDrainPerSec * Time.deltaTime);
+			m_Stamina.DamageStat(RunDrainPerSec * Time.deltaTime);
 		}
 	}
 

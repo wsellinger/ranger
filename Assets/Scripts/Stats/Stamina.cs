@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Stamina : Stat
+public class Stamina : RegeneratingStat
 {
-	public float MaxRegenPerSec;
-	public float RegenDelay;
 
 	private bool m_bDepleted;
 	virtual public bool Depleted
@@ -27,48 +25,24 @@ public class Stamina : Stat
 	public event EventHandler StaminaDepleted;
 	public event EventHandler StaminaRestored;
 
-	private Vitality m_vitality;
-	private float m_fRegenDelay;
-
-	override public void Awake()
-	{
-		base.Awake();
-
-		m_vitality = GetComponent<Vitality>();
-	}
-
-	void Update()
+	override protected void Update()
 	{
 		if (m_fRegenDelay == 0)
 		{
+			if (CurrentStat == 0)
+			{
+				Depleted = true;
+			}
+
 			Regen();
 		}
-		else
-		{
-			m_fRegenDelay = Mathf.Max(m_fRegenDelay - Time.deltaTime, 0);
-		}
+
+		base.Update();
 	}
 
-	public void Drain(float fValue)
+	protected override void Regen()
 	{
-		CurrentStat -= Mathf.Abs(fValue);
-
-		if (CurrentStat == 0)
-		{
-			Depleted = true;
-		}
-		else
-		{
-			m_fRegenDelay = RegenDelay;
-		}
-	}    
-
-	private void Regen()
-	{
-		if (!Full)
-		{
-			CurrentStat += MaxRegenPerSec * Time.deltaTime * m_vitality.VitalityPercent;
-		}
+		base.Regen();
 
 		//Stay depleted until fully restored
 		if (Depleted && Full)
