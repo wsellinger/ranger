@@ -14,6 +14,11 @@ public class Vitality : Stat
 		}
 	}
 
+	public void Replenish(float fValue)
+	{
+		CurrentStat += Mathf.Abs(fValue);
+	}
+
 	private void Update()
 	{
 		CurrentStat -= DecayPerSec * Time.deltaTime;

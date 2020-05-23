@@ -24,7 +24,7 @@ public class EnvironmentalDamage : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.tag == "Player" && fTimer == (Interval))
+        if (other.gameObject.tag == Tags.PLAYER && fTimer == (Interval))
         {
             other.gameObject.GetComponent<Health>().TakeDamage(DamagePerInteval);
             fTimer = 0;
