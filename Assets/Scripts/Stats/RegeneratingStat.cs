@@ -35,6 +35,13 @@ public class RegeneratingStat : Stat
 		m_fRegenDelay = RegenDelay;
 	}
 
+	public void RegenerateStat(float fRegeneration)
+	{
+		fRegeneration = Mathf.Abs(fRegeneration);
+
+		CurrentMaxStat += fRegeneration;
+	}
+
 	virtual protected void Update()
 	{
 		if (m_fRegenDelay != 0)

@@ -11,7 +11,9 @@ public class Stat : MonoBehaviour
 	public event EventHandler CurrentMaxStatChanged;
 
 	private float m_fCurrentStat;
-    public float CurrentStat
+	private float m_fCurrentMaxStat;
+
+	public float CurrentStat
     {
         get { return m_fCurrentStat; }
 		protected set
@@ -27,7 +29,6 @@ public class Stat : MonoBehaviour
         }
 	}
 
-	private float m_fCurrentMaxStat;
 	public float CurrentMaxStat
 	{
 		get { return m_fCurrentMaxStat; }
@@ -40,6 +41,8 @@ public class Stat : MonoBehaviour
 			{
 				m_fCurrentMaxStat = value;
 				CurrentMaxStatChanged.Raise(this);
+
+				CurrentStat = Mathf.Min(CurrentStat, m_fCurrentMaxStat);
 			}
 		}
 	}
@@ -47,9 +50,24 @@ public class Stat : MonoBehaviour
 	public bool Full
     {
         get { return CurrentStat == CurrentMaxStat; }
-    }
+	}
 
-    public virtual void Awake()
+	public bool Empty
+	{
+		get { return CurrentStat == 0; }
+	}
+
+	public bool MaxFull
+	{
+		get { return CurrentMaxStat == MaxStat; }
+	}
+
+	public bool MaxEmpty
+	{
+		get { return CurrentMaxStat == 0; }
+	}
+
+	public virtual void Awake()
     {
 		m_fCurrentStat = m_fCurrentMaxStat = MaxStat;		
     }
