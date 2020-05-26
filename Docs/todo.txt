@@ -1,10 +1,10 @@
 todo
-	add sleep
+	no running if no max stamina
+	Add sleep
 		vitality max regen
-	consider changing environmental damage to "loss/damage per second" to smooth it out
-	run
+	Run
 		ignore input magnitude on run
-	vitality
+	Vitality
 		add 3 state functionality
 			satisfied
 				2/3 of bar
@@ -19,4 +19,24 @@ todo
 			starving
 				no bar, pulses red outer glow
 				health drain
-					
+	Convert health to chunked
+	Convert stamina to chunked if I figure out how I want that to work
+	Convert Vitality to chunked?
+	Consider changing environmental damage to "loss/damage per second" to smooth it out
+	Refactor
+		Player Input Manager, so all input is Enum
+		Update to use new input package?
+		Move movement logic to PlayerMovement
+		Move regeneration/rest/sleep logic to SurvivalSystem
+		Put logic to manage 
+	Gathering
+		inventory
+		inventory ui
+		quick eat ui and functionality
+	Hunting
+		rabbit
+			drop meat
+			behavior
+				move from grass to grass
+				run if approached unstealthed
+				run if approached stealthed

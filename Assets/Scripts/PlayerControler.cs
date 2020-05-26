@@ -28,7 +28,7 @@ public class PlayerControler : MonoBehaviour
     {
         get 
         {
-            return Input.GetButton("Run") && !Input.GetButton("Rest") && !m_Stamina.Depleted;
+            return Input.GetButton("Run") && !Input.GetButton("Rest") && !m_Stamina.Depleted && !m_Stamina.MaxEmpty;
         }
     }
     private bool Running
