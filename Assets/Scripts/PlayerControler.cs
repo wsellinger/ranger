@@ -28,7 +28,7 @@ public class PlayerControler : MonoBehaviour
     {
         get 
         {
-            return Input.GetButton("Run") && !m_Stamina.Depleted;
+            return Input.GetButton("Run") && !Input.GetButton("Rest") && !m_Stamina.Depleted;
         }
     }
     private bool Running
@@ -99,7 +99,7 @@ public class PlayerControler : MonoBehaviour
     {
         Vector3 v3Acceleration;
 
-        if (v2Input.sqrMagnitude == 0)
+        if (v2Input.sqrMagnitude == 0 || Input.GetButton("Rest"))
         {
             ApplyFriction();
         }

@@ -1,15 +1,22 @@
 todo
-	create custom classes for each ui bar
-		grey out stamina bar when depleted == true
-	add max stat degen
-		stamina
-		health
-	add rest
-		helth max regen
-		stamina max regen
 	add sleep
 		vitality max regen
 	consider changing environmental damage to "loss/damage per second" to smooth it out
 	run
 		ignore input magnitude on run
-	
+	vitality
+		add 3 state functionality
+			satisfied
+				2/3 of bar
+				purple
+				full health regen
+				full stamina regen
+			hungry
+				last third of bar
+				orange
+				no health regen
+				half stamina regen
+			starving
+				no bar, pulses red outer glow
+				health drain
+					

@@ -13,6 +13,9 @@ public class RegeneratingStat : Stat
 	[Tooltip("The amount of time in seconds to wait before stamina regen continues after loss")]
 	public float RegenDelay;
 
+	[Tooltip("How many times faster the stat value regenerates than the max stat while resting")]
+	public float RegenMultiplier = 2;
+
 	protected float m_fRegenDelay;
 
 	private Vitality m_vitality;
@@ -40,6 +43,7 @@ public class RegeneratingStat : Stat
 		fRegeneration = Mathf.Abs(fRegeneration);
 
 		CurrentMaxStat += fRegeneration;
+		CurrentStat += fRegeneration * 2;
 	}
 
 	virtual protected void Update()
